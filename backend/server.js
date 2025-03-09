@@ -12,16 +12,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 4500;
 
-app.use('/api/user',userRouter)
-
-
-
 connectDB();
 connectCloudinary();
 
 app.get("/", (req,res) => {
     res.json("API working");
 });
+app.use('/api/user',userRouter)
 
 app.listen(PORT,() => {
     console.log(`Backend is working at port ${PORT}`);

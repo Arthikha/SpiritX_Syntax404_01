@@ -1,13 +1,16 @@
-import User from "../models/userModel.js"
+import userModel from "../models/userModel.js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
 const registerUser = async (req, res) => {
     try {
-        const {  userName, email, password, confirmPssword } = req.body;
+        const {  userName, email, password, confirmPassword } = req.body;
 
-        if (!userName || !password || !confirmPssword|| !email) {
+        if (!userName || !password || !confirmPassword|| !email) {
             return res.json({ success: false, message: "Please enter details" });
+        }
+        if(password != confirmPassword){
+            return res.json({sucess:false,message:"Enter correct password"})
         }
         if (password.length < 8) {
             return res.json({ success: false, message: "Please enter 8-digit password" });
@@ -15,9 +18,13 @@ const registerUser = async (req, res) => {
 
         // Check if the username already exists
         const existingUser = await userModel.findOne({ userName });
-        if (existingUser) {
-            return res.json({ success: false, message: "Username already taken, choose a different one" });
+        const existingEmail = await userModel.findOne({ email });
+        
+        if (existingUser && existingEmail) {
+            return res.json({ success: false, message: "Username and Email already taken, choose a different one" });
         }
+        
+        
 
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt);
@@ -27,7 +34,7 @@ const registerUser = async (req, res) => {
             userName,
             email,
             password: hashPassword,
-            confirmPssword: hashPassword,
+            confirmPassword: hashPassword,
         };
 
         const newUser = new userModel(userData);
@@ -43,30 +50,6 @@ const registerUser = async (req, res) => {
 };
 
 
-// API for login user
-const loginUser = async (req,res) => {
-
-    try {
-        const { userName,password} = req.body;
-        const user = await userModel.findOne({userName});
-
-        if(!user){
-            return res.json({success:false,message:"User not found"});
-        }
-
-        const isMatch = await bcrypt.compare(password,user.password);
-
-        if(isMatch){
-            const token = jwt.sign({id:user._id},process.env.JWT_SECRET);
-            return res.json({success:true,token});
-        }else{
-            return res.json({success:false,message:'Invalid Password'});
-        }
-        
-    } catch (error) {
-        return res.json({success:false,message:error.message});
-    }
-}
 
 // API to get user Data
 const getUserData = async (req, res) => {
@@ -82,4 +65,4 @@ const getUserData = async (req, res) => {
 };
 
 
-export { registerUser, loginUser, getUserData }
+export { registerUser,  getUserData }

@@ -4,3 +4,10 @@
 *{
   font-family: "Libre Baskerville", serif;
 }
+
+body {
+  background-image: url('bg.jpg'); /* Replace with the correct path to your image */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
