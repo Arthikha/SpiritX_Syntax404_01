@@ -54,7 +54,7 @@ const registerUser = async (req, res) => {
 // API to get user Data
 const getUserData = async (req, res) => {
     try {
-        const user = await userModel.findById(req.user.id).select("-password");
+        const user = await userModel.findById(req.body.userId).select("-password");
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
