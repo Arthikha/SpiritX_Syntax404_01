@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useContext, useState, useEffect } from "react";
-import { UserContext } from "../context/userContext";
+import { userContext } from "../context/userContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -18,7 +18,7 @@ const Signup = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
-  const { backendURL, setUToken } = useContext(UserContext);
+  const { backendURL, setUToken } = useContext(userContext);
 
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
