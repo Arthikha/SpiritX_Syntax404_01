@@ -1,13 +1,16 @@
-import User from "../models/userModel.js"
+import userModel from "../models/userModel.js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
 const registerUser = async (req, res) => {
     try {
-        const {  userName, email, password, confirmPssword } = req.body;
+        const {  userName, email, password, confirmPassword } = req.body;
 
-        if (!userName || !password || !confirmPssword|| !email) {
+        if (!userName || !password || !confirmPassword|| !email) {
             return res.json({ success: false, message: "Please enter details" });
+        }
+        if(password != confirmPassword){
+            return res.json({sucess:false,message:"Enter correct password"})
         }
         if (password.length < 8) {
             return res.json({ success: false, message: "Please enter 8-digit password" });
@@ -27,7 +30,7 @@ const registerUser = async (req, res) => {
             userName,
             email,
             password: hashPassword,
-            confirmPssword: hashPassword,
+            confirmPassword: hashPassword,
         };
 
         const newUser = new userModel(userData);
@@ -55,6 +58,7 @@ const loginUser = async (req,res) => {
         }
 
         const isMatch = await bcrypt.compare(password,user.password);
+        
 
         if(isMatch){
             const token = jwt.sign({id:user._id},process.env.JWT_SECRET);
